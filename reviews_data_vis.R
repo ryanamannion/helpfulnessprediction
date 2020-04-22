@@ -10,7 +10,7 @@ attach(review_data)
 help_score <- hnum/hdenom
 help_score[is.nan(help_score)] <- 0
 
-hist(help_score, main="Histogram of Helpfulness Scores", 
+hist(help_score, xlim=c(0,1), main="Histogram of Helpfulness Scores", 
      xlab="Helpfulness Score (helpful/total votes)")
 
 detach(review_data)
