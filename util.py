@@ -37,10 +37,32 @@ def read_data(csv_file):
     return header_key, review_data
 
 
+def data_to_tsv(data_dict, columns):
+    with open("review_data.tab", 'w') as f:
+        # prints header row
+        header_row_values = [column for column in columns]
+        new_row = "\t".join(header_row_values) + "\n"
+        f.write(new_row)
+        # picks sample from data_dict for length, should be the same across values
+        sample = list(data_dict.values())[0]
+        for i in range(len(sample)):
+            row_values = []
+            for column in columns:
+                values = data_dict[column]
+                value = values[i]
+                row_values.append(value)
+            new_row = "\t".join(row_values) + "\n"
+            f.write(new_row)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path', type=str, default="./data/reviews.csv",
+    parser.add_argument('--data_path', type=str, default="../helpfulnessprediction-1/data/reviews.csv",
                         help="csv file containing data to be read")
     args = parser.parse_args()
 
     headers, data = read_data(args.data_path)
+
+    # select some number of headers for export to tsv
+    select_headers = ["HelpfulnessNumerator", "HelpfulnessDenominator", "Score"]
+    data_to_tsv(data, select_headers)
