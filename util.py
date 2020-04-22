@@ -8,7 +8,7 @@ import argparse
 import csv
 
 
-def read_data(csv_file, header=True):
+def read_data(csv_file):
     """
     This function reads the data from the csv file and returns a dictionary with column name as keys and
     cell contents as values
@@ -17,7 +17,8 @@ def read_data(csv_file, header=True):
     Id, ProductId, UserId, ProfileName, HelpfulnessNumerator, HelpfulnessDenominator, Score, Time, Summary, Text
 
     :param csv_file: data file of type csv
-    :return review_data:
+    :return header_key: lst, a list of headers in csv_file
+    :return review_data: dict, a dictionary with headers as keys and lists of their respective columns as values
     """
     with open(csv_file) as f:
         csv_reader = csv.reader(f, delimiter=',')
@@ -33,7 +34,7 @@ def read_data(csv_file, header=True):
                 for j, cell_value in enumerate(row):
                     col_name = header_key[j]
                     review_data[col_name].append(cell_value)
-    return review_data
+    return header_key, review_data
 
 
 if __name__ == "__main__":
@@ -42,4 +43,4 @@ if __name__ == "__main__":
                         help="csv file containing data to be read")
     args = parser.parse_args()
 
-    data = read_data(args.data_path)
+    headers, data = read_data(args.data_path)
