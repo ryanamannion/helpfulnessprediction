@@ -31,3 +31,14 @@ being very helpful (with a ratio of votes for helpful to all votes being
 ![](./images/helpfulness_hist.png) 
 
 *Image 1: Histogram of Helpfulness Scores*
+
+## The Proposed Methodology
+
+### Model
+
+### Features
+
+### Evaluation
+
+## The Hypothesis
+
