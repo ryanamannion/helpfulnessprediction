@@ -1,8 +1,8 @@
 # Helpfulness Score Prediction with Python
 
-Ryan A. Mannion
+**Ryan A. Mannion**
 
-Georgetown University
+**Georgetown University**
 
 Final Project for LING472 - Computational Linguistics
 with Advanced Python
