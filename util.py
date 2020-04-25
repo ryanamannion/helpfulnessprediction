@@ -19,7 +19,6 @@ def read_data(csv_file):
     Id, ProductId, UserId, ProfileName, HelpfulnessNumerator, HelpfulnessDenominator, Score, Time, Summary, Text
 
     :param csv_file: data file of type csv
-    :return header_key: lst, a list of headers in csv_file
     :return review_data: dict, a dictionary with headers as keys and lists of their respective columns as values
     """
     with open(csv_file) as f:
@@ -36,7 +35,7 @@ def read_data(csv_file):
                 for j, cell_value in enumerate(row):
                     col_name = header_key[j]
                     review_data[col_name].append(cell_value)
-    return header_key, review_data
+    return review_data
 
 
 def data_to_tsv(data_dict, columns):
@@ -63,7 +62,7 @@ if __name__ == "__main__":
                         help="csv file containing data to be read")
     args = parser.parse_args()
 
-    headers, data = read_data(args.data_path)
+    data = read_data(args.data_path)
 
     # select some number of headers for export to tsv
     select_headers = ["HelpfulnessNumerator", "HelpfulnessDenominator", "Score"]
