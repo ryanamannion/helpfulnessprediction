@@ -26,7 +26,7 @@ help_scores <- help_score_no_nan[!help_score_no_nan > 1] # remove those values
 
 # Histogram of Scores
 hist(help_score_no_nan, xlim=c(0,1), 
-     main="Histogram of Helpfulness Scores (Without NaN Vlues)", 
+     main="Histogram of Helpfulness Scores", 
      xlab="Helpfulness Score (helpful votes/total votes)")
 
 detach(review_data)
