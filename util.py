@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
 util.py
-
 python file with utilities for reading and working with data from reviews.csv
+
+Ryan A. Mannion
+Written for LING472 Final Project
 """
 import argparse
 import csv
