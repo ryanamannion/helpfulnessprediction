@@ -56,6 +56,10 @@ def data_to_tsv(data_dict, columns):
             f.write(new_row)
 
 
+def split_data():
+    pass
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_path', type=str, default="../helpfulnessprediction-1/data/reviews.csv",
