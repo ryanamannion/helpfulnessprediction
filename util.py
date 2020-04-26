@@ -38,12 +38,19 @@ def read_data(csv_file):
     return review_data
 
 
-def data_to_tsv(data_dict, columns):
-    with open("review_data.tab", 'w') as f:
+def data_to_tsv(data_dict, columns, output_name="review_data.tab"):
+    """
+    Function to select columns from the data and output them to a tsv file for use in R and other scripts
+    :param data_dict: dict, dictionary containing the data
+    :param columns: list of column names to be output to tsv, must match headers in data_dict
+    :param output_name: name of file to be output to cwd, defaults to review_data.tab
+    :return: outputs file called value of output_name to cwd
+    """
+    with open(output_name, 'w') as f:
         # prints header row
         header_row_values = [column for column in columns]
-        new_row = "\t".join(header_row_values) + "\n"
-        f.write(new_row)
+        header_row = "\t".join(header_row_values) + "\n"
+        f.write(header_row)
         # picks sample from data_dict for length, should be the same across values
         sample = list(data_dict.values())[0]
         for i in range(len(sample)):
@@ -56,7 +63,15 @@ def data_to_tsv(data_dict, columns):
             f.write(new_row)
 
 
-def split_data():
+def split_data(data, test=10, shuffle=True, dev_test=True):
+    """
+    Function to
+    :param data:
+    :param test:
+    :param shuffle:
+    :param dev_test:
+    :return:
+    """
     pass
 
 
@@ -66,8 +81,8 @@ if __name__ == "__main__":
                         help="csv file containing data to be read")
     args = parser.parse_args()
 
-    data = read_data(args.data_path)
+    my_data = read_data(args.data_path)
 
     # select some number of headers for export to tsv
     select_headers = ["HelpfulnessNumerator", "HelpfulnessDenominator", "Score"]
-    data_to_tsv(data, select_headers)
+    data_to_tsv(my_data, select_headers)
