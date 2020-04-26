@@ -8,12 +8,12 @@ Written for LING472 Final Project
 """
 import argparse
 import csv
+import numpy as np
 
 
 def read_data(csv_file):
     """
-    This function reads the data from the csv file and returns a dictionary with column name as keys and
-    cell contents as values
+    Reads data from the csv file and returns a dictionary with column name as keys and cell contents as values
 
     The columns are labeled as follows:
     Id, ProductId, UserId, ProfileName, HelpfulnessNumerator, HelpfulnessDenominator, Score, Time, Summary, Text
@@ -38,39 +38,42 @@ def read_data(csv_file):
     return review_data
 
 
-def data_to_tsv(data_dict, columns, output_name="review_data.tab"):
+def data_to_tsv(data_dict, all_columns=True, columns=None, output_name="review_data.tab"):
     """
-    Function to select columns from the data and output them to a tsv file for use in R and other scripts
+    Selects columns from the data and output them to a tsv file for use in R and other functions
     :param data_dict: dict, dictionary containing the data
-    :param columns: list of column names to be output to tsv, must match headers in data_dict
+    :param all_columns: bool, if true, all columns from data_dict are output to tsv
+    :param columns: if all is False, list of column names to be output to tsv, must match headers in data_dict
     :param output_name: name of file to be output to cwd, defaults to review_data.tab
     :return: outputs file called value of output_name to cwd
     """
     with open(output_name, 'w') as f:
-        # prints header row
-        header_row_values = [column for column in columns]
+        if all_columns:
+            header_row_values = data_dict.keys()
+        else:
+            header_row_values = [column for column in columns]
+        # prints header row to file
         header_row = "\t".join(header_row_values) + "\n"
         f.write(header_row)
         # picks sample from data_dict for length, should be the same across values
         sample = list(data_dict.values())[0]
         for i in range(len(sample)):
             row_values = []
-            for column in columns:
-                values = data_dict[column]
+            for column_name in header_row_values:
+                values = data_dict[column_name]
                 value = values[i]
                 row_values.append(value)
             new_row = "\t".join(row_values) + "\n"
             f.write(new_row)
 
 
-def split_data(data, test=10, shuffle=True, dev_test=True):
+def split_data(data, test=10, dev_test=True):
     """
-    Function to
-    :param data:
-    :param test:
-    :param shuffle:
-    :param dev_test:
-    :return:
+    Shuffles and splits data into train and test sets for experimental use
+    :param data: data to be split TODO: variable type?
+    :param test: int, percentage of data to be withheld for testing, defaults to 10%
+    :param dev_test: bool, whether or not to create a dev test set of the same size as test
+    :return: TODO
     """
     pass
 
