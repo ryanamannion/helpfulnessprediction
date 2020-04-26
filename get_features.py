@@ -35,7 +35,7 @@ class HelpfulnessVectorizer:
         data has columns: Id,ProductId,UserId,ProfileName,HelpfulnessNumerator,HelpfulnessDenominator,
                             Score,Time,Summary,Text
         :param data: dictionary containing review information, output from util.py's function read_data
-        :return: numpy nd array of shape TODO: specify shape
+        :return: numpy nd array of shape [# reviews, 6]
         """
         # selects sample from data dictionary for length
         sample = list(data.values())[0]
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print("Loading Data...")
-    data = read_data(args.data_path)
+    my_data = read_data(args.data_path)
 
     my_vectorizer = HelpfulnessVectorizer()
-    my_vectorizer.get_simple_features(data=data)
+    my_vectorizer.get_simple_features(data=my_data)
