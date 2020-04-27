@@ -75,7 +75,7 @@ def data_to_tsv(data_dict, output_name=str, all_columns=True, columns=None):
 
 class ReviewerData:
     """
-    Class to handle loading and splitting of reviewer data, partly just to practice creating classes
+    Class to handle loading and splitting of reviewer data
 
     Args:
         data_file (str): file name of the data to be loaded
