@@ -6,25 +6,29 @@ Ryan A. Mannion
 Written for LING472 Final Project
 """
 import spacy
+from spacy_readability import Readability
 import numpy as np
 import argparse
-from data_util import read_data
+from data_util import ReviewerData
 from tqdm import tqdm
 
 
 class HelpfulnessVectorizer:
     """Creates a matrix of features for helpfulness prediction"""
 
-    def __init__(self):
+    def __init__(self, data):
         """
         Instantiates SimilarityVectorizer, loads spaCy model
         """
         print("Initializing spaCy...")
         self.nlp = spacy.load("en_core_web_lg")
+        self.read = Readability()
+        self.nlp.add_pipe(self.read, last=True)
+        self.data = data
 
-    def get_simple_features(self, data):
+    def get_features(self):
         """
-        6 features in this function:
+        Simple Features in this function:
             - Star rating of five
             - Number of sentences
             - Number of tokens
@@ -32,17 +36,25 @@ class HelpfulnessVectorizer:
             - Average tokens/ sentence
             - Average characters/ token
 
+        Readability Features in this function:
+            - Flesch-Kincaid Grade Level
+            - Flesch-Kincaid Reading Ease
+            - Dale Chall
+            - SMOG
+            - Coleman-Liau Index
+            - Automated Readability Index
+            - FORCAST
+
         data has columns: Id,ProductId,UserId,ProfileName,HelpfulnessNumerator,HelpfulnessDenominator,
                             Score,Time,Summary,Text
-        :param data: dictionary containing review information, output from util.py's function read_data
-        :return: numpy nd array of shape [# reviews, 6]
+        :return: numpy nd array of shape [# reviews, 13]
         """
         # selects sample from data dictionary for length
-        sample = list(data.values())[0]
+        sample = list(self.data.values())[0]
 
-        my_array = np.zeros((len(sample), 6))   # as many rows as sample is long, 6 features wide
+        my_array = np.zeros((len(sample), 13))   # as many rows as sample is long, 6 features wide
 
-        texts = data["Text"]
+        texts = self.data["Text"]
         print("Getting Simple Features...")
         for i, text in tqdm(enumerate(texts)):
             doc = self.nlp(text)
@@ -62,30 +74,42 @@ class HelpfulnessVectorizer:
                 for token in sent:
                     char_per_tok.append(len(token))
 
-            # populate array
-            my_array[i, 0] = data["Score"][i]  # score/ star rating of review
+            # Simple Features
+            my_array[i, 0] = self.data["Score"][i]  # score/ star rating of review
             my_array[i, 1] = num_sents
             my_array[i, 2] = num_toks
             my_array[i, 3] = num_chars
             my_array[i, 4] = sum(toks_per_sent) / len(toks_per_sent)
             my_array[i, 5] = sum(char_per_tok) / len(char_per_tok)
+            # Readability Scores
+            my_array[i, 6] = doc._.flesch_kincaid_grade_level
+            my_array[i, 7] = doc._.flesch_kincaid_reading_ease
+            my_array[i, 8] = doc._.dale_chall
+            my_array[i, 9] = doc._.smog
+            my_array[i, 10] = doc._.coleman_liau_index
+            my_array[i, 11] = doc._.automated_readability_index
+            my_array[i, 12] = doc._.forcast
 
         return my_array
 
-    # TODO: add feature function for more complex features
 
-    # TODO: get features, combine arrays with numpy.concatenate (or hstack)
-    # https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html
+def main():
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--data_path', type=str, default="reviews.csv",
+    #                     help="csv file containing data to be read")
+    # args = parser.parse_args()
+
+    data = './data/train.tsv'
+
+    print(f"Loading Data: {data} ...")
+    reviewer_data = ReviewerData(data_file=data, delimiter='\t')
+
+    my_vectorizer = HelpfulnessVectorizer(reviewer_data.data_dict)
+
+    feature_array = my_vectorizer.get_features()
+
+    print(feature_array)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path', type=str, default="reviews.csv",
-                        help="csv file containing data to be read")
-    args = parser.parse_args()
-
-    print("Loading Data...")
-    my_data = read_data(args.data_path)
-
-    my_vectorizer = HelpfulnessVectorizer()
-    my_vectorizer.get_simple_features(data=my_data)
+    main()
