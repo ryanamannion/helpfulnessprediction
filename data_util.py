@@ -94,7 +94,6 @@ class ReviewerData:
         dev_test (dict): dictionary to contain dev_test data after method split_data is run
         test (dict): dictionary to contain test data after method split_data is run
     """
-
     def __init__(self, data_file, delimiter):
         self.data_file_name = data_file
         self.delimiter_type = delimiter
