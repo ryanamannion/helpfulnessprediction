@@ -8,7 +8,7 @@ Written for LING472 Final Project
 import spacy
 import numpy as np
 import argparse
-from util import read_data
+from data_util import read_data
 from tqdm import tqdm
 
 
