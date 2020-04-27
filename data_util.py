@@ -18,7 +18,7 @@ import random
 from collections import defaultdict
 
 
-def read_data(csv_file, delimiter):
+def read_data(csv_file, delimiter=str):
     """
     Reads data from csv/tsv file and returns a dictionary with column name as keys and cell contents as values
     :param csv_file: data file of type csv
@@ -44,18 +44,18 @@ def read_data(csv_file, delimiter):
     return review_data, header_key
 
 
-def data_to_tsv(data_dict, all_columns=True, columns=None, output_name="review_data.tab"):
+def data_to_tsv(data_dict, output_name=str, all_columns=True, columns=None):
     """
     Outputs data from dictionary output of read_data to tsv, allows for selection of only certain columns
     :param data_dict: dict, dictionary containing the data
     :param all_columns: bool, if true, all columns from data_dict are output to tsv
     :param columns: if all_columns is False, list of column names to be output to tsv, must match headers in data_dict
-    :param output_name: name of file to be output to cwd, defaults to review_data.tab
-    :return: outputs file called value of output_name to cwd
+    :param output_name: name of file to be output, passeed without file extension
     """
+    output_name = f"{output_name}.tsv"
     with open(output_name, 'w') as f:
         if all_columns:
-            header_row_values = data_dict.keys()
+            header_row_values = list(data_dict.keys())
         else:
             header_row_values = [column for column in columns]
         # prints header row to file
@@ -80,6 +80,9 @@ class ReviewerData:
         self.data_file_name = data_file
         self.delimiter_type = delimiter
         self.data_dict, self.headers = read_data(data_file, delimiter=delimiter)
+        self.train = None
+        self.dev_test = None
+        self.test = None
 
     def split_data(self, test=10, dev_test=True, shuffle=True):
         """
@@ -88,16 +91,12 @@ class ReviewerData:
         :param dev_test: bool, whether or not to create a dev test set of the same size as test, if True split_data will
         return a third variable dev_test_split
         :param shuffle: bool, whether or not to shuffle the data before splitting
-        :return dev_split: development split of data
-        :return test_split: test_split of data
-        :return dev_test_split: ONLY returns if dev_test=True
         """
         # Shuffles data if specified
-        length_of_data = len(self.data_dict.values()[0])
+        length_of_data = len(list(self.data_dict.values())[0])
+        order = list(range(length_of_data))
         if shuffle:
-            order = random.shuffle[list(range(length_of_data))]
-        else:
-            order = list(range(length_of_data))
+            random.shuffle(order)
 
         # determines split point and splits order indices
         test_percent = test / 100
@@ -110,31 +109,41 @@ class ReviewerData:
             dev_split_point = int(len(dev_indices) * test_percent)
             dev_test_indices = dev_indices[:dev_split_point]
             dev_indices = dev_indices[dev_split_point:]     # reassigns variable
-            dev_test_split = defaultdict(list)
-        test_split = defaultdict(list)
-        dev_split = defaultdict(list)
+            self.dev_test = defaultdict(list)
+        self.test = defaultdict(list)
+        self.train = defaultdict(list)
 
         for header in self.headers:
             column_data = self.data_dict[header]
-            test_split[header] = [column_data[i] for i in test_indices]
-            dev_split[header] = [column_data[i] for i in dev_indices]       # will be its new value if dev_test is True
+            self.test[header] = [column_data[i] for i in test_indices]
+            self.train[header] = [column_data[i] for i in dev_indices]       # will be its new value if dev_test is True
             if dev_test:
-                dev_test_split[header] = [column_data[i] for i in dev_test_indices]
+                self.dev_test[header] = [column_data[i] for i in dev_test_indices]
 
-        if dev_test:
-            return dev_split, dev_test_split, test_split
-        else:
-            return dev_split, test_split
+
+def main():
+    """
+    Loads csv file, creates class instance and saves splits to tsv files for later use
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_path', type=str, default="reviews.csv", help="csv file containing data to be read")
+    args = parser.parse_args()
+
+    print("Loading data...")
+    review_data = ReviewerData(data_file=args.data_path, delimiter=',')
+
+    print("Splitting data...")
+    review_data.split_data()
+
+    print("Saving train...")
+    data_to_tsv(review_data.train, output_name="./data/train")
+    print("Saving dev_test...")
+    data_to_tsv(review_data.dev_test, output_name="./data/dev_test")
+    print("Saving test...")
+    data_to_tsv(review_data.test, output_name="./data/test")
+
+    print("Complete!")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path', type=str, default="../helpfulnessprediction-1/data/reviews.csv",
-                        help="csv file containing data to be read")
-    args = parser.parse_args()
-
-    my_data = read_data(args.data_path)
-
-    # select some number of headers for export to tsv
-    select_headers = ["HelpfulnessNumerator", "HelpfulnessDenominator", "Score"]
-    data_to_tsv(my_data, select_headers)
+    main()
