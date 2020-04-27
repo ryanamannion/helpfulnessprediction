@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 """
-util.py
-python file with utilities for reading and working with data from reviews.csv
+data_util.py
+
+Contains functions for reading and saving data, as well as the class ReviewerData which handles loading and splitting
+of data, and has attributes to help organization
+
+Functions:
+    read_data
+    data_to_tsv
+
+Class:
+    ReviewerData
 
 Ryan A. Mannion
 Written for LING472 Final Project
-
-Envisioned workflow:
-    - Kaggle csv containing loaded into data_dict via read_data()
-    - data_dict split into dev and test sets with split_data(), saved as tsv
-    - TODO: write function to load data from tsv to data_dict
+2020
 """
 import argparse
 import csv
-import numpy as np
 import random
 from collections import defaultdict
 
@@ -95,6 +99,8 @@ class ReviewerData:
         self.data_file_name = data_file
         self.delimiter_type = delimiter
         self.data_dict, self.headers = read_data(data_file, delimiter=delimiter)
+
+        # if split_data() method used
         self.train = None
         self.dev_test = None
         self.test = None
