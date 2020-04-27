@@ -74,7 +74,22 @@ def data_to_tsv(data_dict, output_name=str, all_columns=True, columns=None):
 
 
 class ReviewerData:
-    """ TODO """
+    """
+    Class to handle loading and splitting of reviewer data, partly just to practice creating classes
+
+    Args:
+        data_file (str): file name of the data to be loaded
+        delimiter (str): delimiter type used in data_file_name, e.g. ',' or '\t'
+
+    Attributes:
+        data_file_name (str): value of arg data_file
+        delimiter_type (str): value of arg delimiter
+        data_dict (dict): dictionary containing data extracted from data_file_name, keys are header row
+        headers (list): list containing header for of data_file_name
+        train (dict): dictionary to contain train data after method split_data is run
+        dev_test (dict): dictionary to contain dev_test data after method split_data is run
+        test (dict): dictionary to contain test data after method split_data is run
+    """
 
     def __init__(self, data_file, delimiter):
         self.data_file_name = data_file
@@ -87,10 +102,9 @@ class ReviewerData:
     def split_data(self, test=10, dev_test=True, shuffle=True):
         """
         Shuffles and splits data in unison into train and test sets for experimental use
-        :param test: int, 1-100 percentage of data to be withheld for testing
-        :param dev_test: bool, whether or not to create a dev test set of the same size as test, if True split_data will
-        return a third variable dev_test_split
-        :param shuffle: bool, whether or not to shuffle the data before splitting
+        :param test: (int) 1-100 percentage of data to be withheld for testing
+        :param dev_test: (bool) create a dev test set of the same size as test or not
+        :param shuffle: (bool) shuffle the data before splitting or not
         """
         # Shuffles data if specified
         length_of_data = len(list(self.data_dict.values())[0])
