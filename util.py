@@ -15,6 +15,7 @@ import argparse
 import csv
 import numpy as np
 import random
+from collections import defaultdict
 
 
 def read_data(csv_file, delimiter):
@@ -76,16 +77,20 @@ class ReviewerData:
     """ TODO """
 
     def __init__(self, data_file, delimiter):
+        self.data_file_name = data_file
+        self.delimiter_type = delimiter
         self.data_dict, self.headers = read_data(data_file, delimiter=delimiter)
 
     def split_data(self, test=10, dev_test=True, shuffle=True):
         """
         Shuffles and splits data in unison into train and test sets for experimental use
-        :param data: data to be split TODO: variable type?
         :param test: int, 1-100 percentage of data to be withheld for testing
-        :param dev_test: bool, whether or not to create a dev test set of the same size as test
+        :param dev_test: bool, whether or not to create a dev test set of the same size as test, if True split_data will
+        return a third variable dev_test_split
         :param shuffle: bool, whether or not to shuffle the data before splitting
-        :return: TODO
+        :return dev_split: development split of data
+        :return test_split: test_split of data
+        :return dev_test_split: ONLY returns if dev_test=True
         """
         # Shuffles data if specified
         length_of_data = len(self.data_dict.values()[0])
@@ -94,20 +99,32 @@ class ReviewerData:
         else:
             order = list(range(length_of_data))
 
-        # determines split point
+        # determines split point and splits order indices
         test_percent = test / 100
-        split_point = int(length_of_data * test_percent)     # split point is smaller, thus test = [0:split_point]
-        test_indices = order[:split_point]
-        dev_indices = order[split_point:]
+        test_split_point = int(length_of_data * test_percent)
+        test_indices = order[:test_split_point]
+        dev_indices = order[test_split_point:]
 
-        # create the dev and test dictionaries
-        dev_split = {header: [] for header in self.headers}
-        test_split = {header: [] for header in self.headers}
-
-
+        # further splits dev set into train and dev-test sets if dev_test is True
+        if dev_test:
+            dev_split_point = int(len(dev_indices) * test_percent)
+            dev_test_indices = dev_indices[:dev_split_point]
+            dev_indices = dev_indices[dev_split_point:]     # reassigns variable
+            dev_test_split = defaultdict(list)
+        test_split = defaultdict(list)
+        dev_split = defaultdict(list)
 
         for header in self.headers:
             column_data = self.data_dict[header]
+            test_split[header] = [column_data[i] for i in test_indices]
+            dev_split[header] = [column_data[i] for i in dev_indices]       # will be its new value if dev_test is True
+            if dev_test:
+                dev_test_split[header] = [column_data[i] for i in dev_test_indices]
+
+        if dev_test:
+            return dev_split, dev_test_split, test_split
+        else:
+            return dev_split, test_split
 
 
 if __name__ == "__main__":
