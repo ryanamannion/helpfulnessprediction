@@ -31,9 +31,16 @@ def read_data(csv_file, delimiter=str):
     :return header_key: lst, a list of headers as they appear in review_data as keys
     """
     with open(csv_file) as f:
-        csv_reader = csv.reader(f, delimiter=delimiter)
+        if delimiter == ',':
+            data_file = csv.reader(f, delimiter=delimiter)
+        elif delimiter == '\t':
+            data_file = f
+        else:
+            raise ValueError(f"Delimiter {delimiter} is not supported. Please use csv or tsv")
         i = 0
-        for row in csv_reader:
+        for row in data_file:
+            if delimiter == '\t':
+                row = row.strip('\n').split('\t')
             if i == 0:
                 # header row
                 header_key = [header for header in row]
@@ -41,7 +48,7 @@ def read_data(csv_file, delimiter=str):
                 i += 1
             elif i >= 0:
                 # ensures delimiter did not bug out
-                assert len(row) == len(header_key), "Row is longer than it should be!"
+                assert len(row) == len(header_key), f"Row is longer than it should be!\nheaders:{header_key}\nrow:{row}"
                 for j, cell_value in enumerate(row):
                     col_name = header_key[j]
                     review_data[col_name].append(cell_value)
@@ -94,9 +101,11 @@ class ReviewerData:
         dev_test (dict): dictionary to contain dev_test data after method split_data is run
         test (dict): dictionary to contain test data after method split_data is run
     """
+
     def __init__(self, data_file, delimiter):
         self.data_file_name = data_file
         self.delimiter_type = delimiter
+        print(f"Reading Data: {self.data_file_name} ...")
         self.data_dict, self.headers = read_data(data_file, delimiter=delimiter)
 
         # if split_data() method used
@@ -140,6 +149,11 @@ class ReviewerData:
                 self.dev_test[header] = [column_data[i] for i in dev_test_indices]
 
 
+def preprocess_text(text):
+    text = text.replace("<br />", " ")      # replaces html line breaks with whitespace
+    return text
+
+
 def main():
     """
     Loads csv file, creates class instance and saves splits to tsv files for later use
@@ -148,7 +162,6 @@ def main():
     parser.add_argument('--data_path', type=str, default="reviews.csv", help="csv file containing data to be read")
     args = parser.parse_args()
 
-    print("Loading data...")
     review_data = ReviewerData(data_file=args.data_path, delimiter=',')
 
     print("Splitting data...")
