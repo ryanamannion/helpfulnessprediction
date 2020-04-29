@@ -147,9 +147,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_path', type=str, default="./data/sample.tsv",
                         help="tsv/csv file containing data to be read")
+    parser.add_argument('--name', type=str, default="sample_features", help="what to name the output file")
     args = parser.parse_args()
 
     data = args.data_path
+    name = args.name
 
     reviewer_data = ReviewerData(data_file=data, delimiter='\t')
 
@@ -157,4 +159,4 @@ if __name__ == "__main__":
 
     my_feature_array = my_vectorizer.get_features_text()
 
-    np.save("all_features", my_feature_array)
+    np.save(name, my_feature_array)
