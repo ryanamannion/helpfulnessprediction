@@ -27,7 +27,7 @@ class HelpfulnessVectorizer:
         get_features_text: Extracts features from review texts and fills in a numpy ndarray
     """
 
-    def __init__(self, data, spacy_model='en_core_web_lg'):
+    def __init__(self, data, spacy_model='en_core_web_lg', feature_array=None):
         """
         Instantiates SimilarityVectorizer, loads spaCy model
         """
@@ -36,9 +36,7 @@ class HelpfulnessVectorizer:
         self.read = Readability()
         self.nlp.add_pipe(self.read, last=True)
         self.data = data
-
-        # Populated if get_features_text() performed
-        self.feature_array = None
+        self.feature_array = feature_array
 
     def get_features_text(self):
         """
@@ -157,6 +155,6 @@ if __name__ == "__main__":
 
     my_vectorizer = HelpfulnessVectorizer(reviewer_data.data_dict)
 
-    feature_array = my_vectorizer.get_features_text()
+    my_feature_array = my_vectorizer.get_features_text()
 
-    np.save("all_features", feature_array)
+    np.save("all_features", my_feature_array)

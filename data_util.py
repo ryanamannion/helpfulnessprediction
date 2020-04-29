@@ -102,16 +102,14 @@ class ReviewerData:
         test (dict): dictionary to contain test data after method split_data is run
     """
 
-    def __init__(self, data_file, delimiter):
-        self.data_file_name = data_file
+    def __init__(self, data_file, delimiter, train=None, dev_test=None, test=None):
+        self.data_file = data_file
         self.delimiter_type = delimiter
-        print(f"Reading Data: {self.data_file_name} ...")
+        print(f"Reading Data: {self.data_file} ...")
         self.data_dict, self.headers = read_data(data_file, delimiter=delimiter)
-
-        # if split_data() method used
-        self.train = None
-        self.dev_test = None
-        self.test = None
+        self.train = train
+        self.dev_test = dev_test
+        self.test = test
 
     def split_data(self, test=10, dev_test=True, shuffle=True):
         """
@@ -169,7 +167,7 @@ def main():
 
     review_data = ReviewerData(data_file=args.data_path, delimiter=',')
 
-    print("Splitting data...")
+    print(f"Splitting data {review_data.data_file}...")
     review_data.split_data()
 
     print("Saving train...")
