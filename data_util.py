@@ -20,6 +20,7 @@ import argparse
 import csv
 import random
 from collections import defaultdict
+import numpy as np
 
 
 def read_data(csv_file, delimiter=str):
@@ -84,6 +85,43 @@ def data_to_tsv(data_dict, output_name=str, all_columns=True, columns=None):
             f.write(new_row)
 
 
+def remove_html(text):
+    """
+    Removes select html from an input text
+    :param text: (str) text to remove html from
+    :return text: (str) input string less html tags
+    """
+    text = text.replace("<br />", " ")      # replaces html line breaks with whitespace
+    return text
+
+
+def remove_nonzero(data_dict, feature_array):
+    """
+    This function takes a full feature array and removes the rows corresponding to those reviews which received no votes
+    for helpfulness (i.e. HelpfulnessDenominator == 0). Ideally these reviews would be removed beforehand
+
+    :param data_dict: (dict) data_dict attribute of a ReviewerData instance
+    :param feature_array: ndarray feature array of shape (x, 18) where x == the total number of reviews
+    :return nonzero_feats: ndarray of shape (y, 18) where y == the number of reviews with helpfulness votes
+    """
+    help_denom = data_dict["HelpfulnessDenominator"]
+
+    nonzero_denom = [0 if num == 0 else 1 for num in help_denom]
+    nonzero_feats = np.zeros((sum(nonzero_denom), 18))
+
+    assert len(help_denom) == len(nonzero_feats) and len(help_denom) == len(data_dict["Text"]), "Lists not the same len"
+
+    count = 0
+    for i, nonzero_bin in enumerate(nonzero_denom):
+        if nonzero_bin == 0:
+            pass
+        else:
+            nonzero_feats[count, :] = feature_array[i]
+            count += 1
+
+    return nonzero_feats
+
+
 class ReviewerData:
     """
     Class to handle loading and splitting of reviewer data
@@ -145,16 +183,6 @@ class ReviewerData:
             self.train[header] = [column_data[i] for i in dev_indices]       # will be its new value if dev_test is True
             if dev_test:
                 self.dev_test[header] = [column_data[i] for i in dev_test_indices]
-
-
-def remove_html(text):
-    """
-    Removes select html from an input text
-    :param text: (str) text to remove html from
-    :return text: (str) input string less html tags
-    """
-    text = text.replace("<br />", " ")      # replaces html line breaks with whitespace
-    return text
 
 
 def main():
