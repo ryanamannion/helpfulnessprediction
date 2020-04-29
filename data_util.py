@@ -149,7 +149,12 @@ class ReviewerData:
                 self.dev_test[header] = [column_data[i] for i in dev_test_indices]
 
 
-def preprocess_text(text):
+def remove_html(text):
+    """
+    Removes select html from an input text
+    :param text: (str) text to remove html from
+    :return text: (str) input string less html tags
+    """
     text = text.replace("<br />", " ")      # replaces html line breaks with whitespace
     return text
 
