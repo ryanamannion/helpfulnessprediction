@@ -1,5 +1,5 @@
 """
-get_features_text.py
+get_features.py
 creates a class to get and fill a feature matrix for a logistic regression model
 
 Ryan A. Mannion
@@ -24,7 +24,7 @@ class HelpfulnessVectorizer:
         feature_array (numpy.ndarray): contains extracted features for logistic regression model
 
     Methods:
-        get_features_text: Extracts features from review texts and fills in a numpy ndarray
+        get_features: Extracts features from review texts and fills in a numpy ndarray
     """
 
     def __init__(self, data, spacy_model='en_core_web_lg', feature_array=None):
@@ -38,7 +38,7 @@ class HelpfulnessVectorizer:
         self.data = data
         self.feature_array = feature_array
 
-    def get_features_text(self):
+    def get_features(self):
         """
         Extracts features from review reviews and fills in a numpy ndarray with shape (#ofdocs, 18)
 
@@ -157,6 +157,6 @@ if __name__ == "__main__":
 
     my_vectorizer = HelpfulnessVectorizer(reviewer_data.data_dict)
 
-    my_feature_array = my_vectorizer.get_features_text()
+    my_feature_array = my_vectorizer.get_features()
 
     np.save(name, my_feature_array)
