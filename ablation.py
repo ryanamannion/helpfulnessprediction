@@ -142,13 +142,16 @@ def score_model(condition, test_y, predictions):
     return scores
 
 
-def ablation(train_file, train_features, test_file, test_features):
+def ablation(train_file, train_features, test_file, test_features, scale=False, minimum_votes=10.0, help_boundary=0.6):
     """
     Runs ablation for train and test files
     :param train_file: either a path to tsv or data_dict, file to train LogReg
     :param train_features: feature array for train
     :param test_file: either a path to tsv or data_dict, file to test LogReg
     :param test_features: feature array for test
+    :param scale: (bool) whether or not to scale data before Logistic Regression
+    :param minimum_votes: (float) minimum number of helpfulness votes to be included in ablation sets
+    :param help_boundary: (float) percentage (0-1) of votes needed to be considered helpful
     """
     # Loads data dicts
     if train_file is str and test_file is str:
@@ -160,10 +163,10 @@ def ablation(train_file, train_features, test_file, test_features):
         train_data_dict = train_file
         test_data_dict = test_file
 
-    # Sets Hyperparameters
-    scale = False
-    minimum_votes = 10.0
-    help_boundary = 0.6
+    # Hyperparameters
+    scale = scale
+    minimum_votes = minimum_votes
+    help_boundary = help_boundary
 
     # Writes to log file
     date = datetime.datetime.today()
