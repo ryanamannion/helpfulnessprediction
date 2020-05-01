@@ -12,6 +12,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
 from sklearn.preprocessing import StandardScaler
 from data_util import ReviewerData, filter_data
+import datetime
 
 
 def scale_data(data):
@@ -25,8 +26,8 @@ def scale_data(data):
     return scaled_data
 
 
-def create_ablation_sets(feature_array, data, scale=True):
-    """"
+def create_ablation_sets(feature_array, data, scale=True, minimum_votes=float, help_boundary=float):
+    """
     Takes a full feature array with matching data_dict of ReviewerData instance as input and returns 5 sets of features:
 
     Ablation Feature Sets:
@@ -36,12 +37,13 @@ def create_ablation_sets(feature_array, data, scale=True):
     X4 - AllReview + Summary
     X5 - All
 
-    :param feature_array:
-    :param data:
-    :param scale:
-    :returns X(1-5): feature sets for the five ablation conditions
-    :returns y: gold standard labels
-
+    :param feature_array: ndarray containing full set of features to be turned into ablation set
+    :param data: ReviewerData instance's data_dict attribute, matches feature_array
+    :param scale: (bool) whether or not to scale data before Logistic Regression
+    :param minimum_votes: (float) minimum number of helpfulness votes to be included in ablation sets
+    :param help_boundary: (float) percentage (0-1) of votes needed to be considered helpful
+    :return set(1-5): ndarrays for ablation
+    :return y: gold standard tags for helpfulness, binary based on help_boundary
     """
 
     if isinstance(feature_array, str):
@@ -49,7 +51,8 @@ def create_ablation_sets(feature_array, data, scale=True):
     else:
         all_features = feature_array
 
-    processed_feats, y = filter_data(data_dict=data, feature_array=all_features, minimum_votes=10, help_boundary=0.9)
+    processed_feats, y = filter_data(data_dict=data, feature_array=all_features,
+                                     minimum_votes=minimum_votes, help_boundary=help_boundary)
 
     summary_feats = processed_feats[:, 0:5]
     review_simple_feats = processed_feats[:, 6:11]
@@ -105,7 +108,7 @@ def get_zero_rule(y):
     most_common = 1 if sum(y) > 0.5 * len(y) else 0
     for i in range(len(y)):
         zero_rule[i] = most_common
-    return zero_rule
+    return zero_rule, most_common
 
 
 def score_model(condition, test_y, predictions, save_out=True):
@@ -121,7 +124,7 @@ def score_model(condition, test_y, predictions, save_out=True):
     precision = precision_score(test_y, predictions)
     recall = recall_score(test_y, predictions)
     f1 = f1_score(test_y, predictions)
-    scores = f"""\tResults for model {condition}:
+    scores = f"""\t{condition}:
             Accuracy: {accuracy:0.03}
             Precision: {precision:0.03}
             Recall: {recall:0.03}
@@ -131,6 +134,7 @@ def score_model(condition, test_y, predictions, save_out=True):
     if save_out:
         with open(f"{condition}_scores.txt", 'w') as f:
             f.write(scores)
+    return scores
 
 
 def main():
@@ -155,10 +159,37 @@ def main():
     test_data = ReviewerData(data_file=test_file, delimiter='\t')
     test_data_dict = test_data.data_dict
 
+    # Sets some Hyperparameters
+    scale = False
+    minimum_votes = 10
+    help_boundary = 0.6
+
+    # Writes to log file
+    date = datetime.datetime.today()
+    log_file = open(f"log_{date.month}_{date.day}_{date.hour}_{date.minute}.txt", 'w')
+    log_file.write(f"Log file for experiment on {date.month}/{date.day} at {date.hour}:{date.minute}\n"
+                   f"Train File: {train_file}\nTest File: {test_file}\n\n"
+                   f"Hyperparameters:\n"
+                   f"----------------\n"
+                   f"\tScaled Data: {scale}\n"
+                   f"\tMinimum Votes Needed: {minimum_votes}\n"
+                   f"\tHelpfulness Cutoff Point: {help_boundary}\n\n")
+
     # Creates Ablation sets for Train and Test
-    X1, X2, X3, X4, X5, y = create_ablation_sets(feature_array=feature_array, data=train_data_dict, scale=False)
+    X1, X2, X3, X4, X5, y = create_ablation_sets(feature_array=feature_array, data=train_data_dict, scale=scale,
+                                                 minimum_votes=minimum_votes, help_boundary=help_boundary)
     tX1, tX2, tX3, tX4, tX5, test_y = create_ablation_sets(feature_array=test_features, data=test_data_dict,
-                                                           scale=False)
+                                                           scale=scale, minimum_votes=minimum_votes,
+                                                           help_boundary=help_boundary)
+    zero_rule, most_common = get_zero_rule(test_y)
+
+    log_file.write(f"Model Information:\n"
+                   f"------------------\n"
+                   f"\tNumber of Train Reviews: {len(X1[:, 0])}\n"
+                   f"\tNumber of Test Reviews: {len(tX1[:, 0])}\n"
+                   f"\tZero Rule Value: {most_common}\n\n"
+                   f"Results:\n"
+                   f"--------\n")
 
     ablation = {"model1": (X1, tX1),
                 "model2": (X2, tX2),
@@ -166,17 +197,18 @@ def main():
                 "model4": (X4, tX4),
                 "model5": (X5, tX5)}
 
-    zero_rule = get_zero_rule(test_y)
-
     # iteratively fits, predicts, and scores each model
     for condition, features in ablation.items():
         X, test_X = features
         model = run_logreg(X, y, condition=condition, save=False)
         predictions = model.predict(test_X)
         print("Guessed all 1s") if len(predictions) == sum(predictions) else print("Didn't guess all 1s")
-        score_model(condition=condition, test_y=test_y, predictions=predictions, save_out=True)
+        scores = score_model(condition=condition, test_y=test_y, predictions=predictions, save_out=False)
+        log_file.write(scores + '\n')
 
-    score_model(condition="Zero Rule", test_y=test_y, predictions=zero_rule, save_out=True)
+    zero_rule_score = score_model(condition="Zero Rule", test_y=test_y, predictions=zero_rule, save_out=True)
+    log_file.write(zero_rule_score)
+    log_file.close()
 
 
 if __name__ == "__main__":
