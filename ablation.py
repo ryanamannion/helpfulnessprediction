@@ -46,10 +46,15 @@ def create_ablation_sets(feature_array, data,  minimum_votes, help_boundary, sca
     :return y: gold standard tags for helpfulness, binary based on help_boundary
     """
 
-    if isinstance(feature_array, str):
-        all_features = np.load(feature_array) if feature_array.endswith(".npy") else np.load(f"{feature_array}.npy")
-    else:
+    if isinstance(feature_array, np.ndarray):
         all_features = feature_array
+    else:
+        all_features = np.load(feature_array) if feature_array.endswith(".npy") else np.load(f"{feature_array}.npy")
+
+    if isinstance(data, ReviewerData):
+        data = data
+    else:
+        data = ReviewerData(data_file=data, delimiter='\t').data_dict
 
     processed_feats, y = filter_data(data_dict=data, feature_array=all_features,
                                      minimum_votes=minimum_votes, help_boundary=help_boundary)
