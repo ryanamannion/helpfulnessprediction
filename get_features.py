@@ -37,8 +37,12 @@ class HelpfulnessVectorizer:
         self.nlp = spacy.load(spacy_model)
         self.read = Readability()
         self.nlp.add_pipe(self.read, last=True)
-        self.data = data
-        self.data_dict = self.data.data_dict
+        if isinstance(data, dict):
+            self.data_dict = data
+            self.data = None
+        else:
+            self.data = data
+            self.data_dict = self.data.data_dict
         self.feature_array = feature_array
 
     def get_features(self):
