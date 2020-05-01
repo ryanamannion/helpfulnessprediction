@@ -1,13 +1,15 @@
 ## First Steps: Environment
 
-- Download `reviews.csv` from Kaggle and save it to the `data` directory
+- Download `reviews.csv` from
+  [Kaggle](https://www.kaggle.com/snap/amazon-fine-food-reviews/) and
+  save it to the `data` directory
 
 - With Conda, create a new conda environment from the helpfulness.yml
   file in dependencies directory
 
-- edit the prefix variable in helpfulness.yml at the very bottom to the
-path for your anaconda3, if you are on MacOS you likely only need to
-change the ???? to the name of your machine
+- Edit the prefix variable in helpfulness.yml at the very bottom to the
+  path for your anaconda3, if you are on MacOS you likely only need to
+  change the ???? to the name of your machine
 
         $ conda env create -f helpfulness.yml
 
