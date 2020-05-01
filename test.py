@@ -22,9 +22,10 @@ test_data = ReviewerData(data_file="data/dev_test_sample.tsv", delimiter='\t')
 
 # Extract Features
 # ----------------
-test_vectorizer = HelpfulnessVectorizer(data=test_data)
-test_vectors = test_vectorizer.get_features()
 train_vectorizer = HelpfulnessVectorizer(data=train_data)
 train_vectors = train_vectorizer.get_features()
+test_vectorizer = HelpfulnessVectorizer(data=test_data)
+test_vectors = test_vectorizer.get_features()
+
 
 ablation(train_data, train_vectors, test_data, test_vectors)
