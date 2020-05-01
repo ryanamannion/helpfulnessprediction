@@ -134,26 +134,23 @@ def score_model(condition, test_y, predictions):
     return scores
 
 
-def ablation():
-    # Argparse Routine
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--train_file', type=str, default="./data/sample.tsv", help="train file csv/tsv")
-    parser.add_argument('-f', '--train_feature_array', default="./data/feature_arrays/sample_features.npy",
-                        help="feature array for train_file")
-    parser.add_argument('-s', '--test_file', type=str, default="./data/sample.tsv", help="test file csv/tsv")
-    parser.add_argument('-a', '--test_feature_array', default="./data/feature_arrays/sample_features.npy",
-                        help="feature array for test_file")
-    args = parser.parse_args()
-    train_file = args.train_file
-    feature_array = args.train_feature_array
-    test_file = args.test_file
-    test_features = args.test_feature_array
-
+def ablation(train_file, train_features, test_file, test_features):
+    """
+    Runs ablation for train and test files
+    :param train_file: either a path to tsv or data_dict, file to train LogReg
+    :param train_features: feature array for train
+    :param test_file: either a path to tsv or data_dict, file to test LogReg
+    :param test_features: feature array for test
+    """
     # Loads data dicts
-    reviewer_data = ReviewerData(data_file=train_file, delimiter="\t")
-    train_data_dict = reviewer_data.data_dict
-    test_data = ReviewerData(data_file=test_file, delimiter='\t')
-    test_data_dict = test_data.data_dict
+    if train_file is str and test_file is str:
+        reviewer_data = ReviewerData(data_file=train_file, delimiter="\t")
+        train_data_dict = reviewer_data.data_dict
+        test_data = ReviewerData(data_file=test_file, delimiter='\t')
+        test_data_dict = test_data.data_dict
+    else:
+        train_data_dict = train_file
+        test_data_dict = test_file
 
     # Sets Hyperparameters
     scale = False
@@ -172,7 +169,7 @@ def ablation():
                    f"\tHelpfulness Cutoff Point: {help_boundary}\n\n")
 
     # Creates Ablation sets for Train and Test
-    X1, X2, X3, X4, X5, y = create_ablation_sets(feature_array=feature_array, data=train_data_dict, scale=scale,
+    X1, X2, X3, X4, X5, y = create_ablation_sets(feature_array=train_features, data=train_data_dict, scale=scale,
                                                  minimum_votes=minimum_votes, help_boundary=help_boundary)
     tX1, tX2, tX3, tX4, tX5, test_y = create_ablation_sets(feature_array=test_features, data=test_data_dict,
                                                            scale=scale, minimum_votes=minimum_votes,
@@ -211,4 +208,17 @@ def ablation():
 
 
 if __name__ == "__main__":
-    ablation()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--train_file', type=str, default="./data/sample.tsv", help="train file csv/tsv")
+    parser.add_argument('-f', '--train_feature_array', default="./data/feature_arrays/sample_features.npy",
+                        help="feature array for train_file")
+    parser.add_argument('-s', '--test_file', type=str, default="./data/sample.tsv", help="test file csv/tsv")
+    parser.add_argument('-a', '--test_feature_array', default="./data/feature_arrays/sample_features.npy",
+                        help="feature array for test_file")
+    args = parser.parse_args()
+    train = args.train_file
+    train_feats = args.train_feature_array
+    test = args.test_file
+    test_feats = args.test_feature_array
+
+    ablation(train, train_feats, test, test_feats)
