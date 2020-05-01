@@ -26,7 +26,7 @@ def scale_data(data):
     return scaled_data
 
 
-def create_ablation_sets(feature_array, data, scale=True, minimum_votes=float, help_boundary=float):
+def create_ablation_sets(feature_array, data,  minimum_votes, help_boundary, scale=True):
     """
     Takes a full feature array with matching data_dict of ReviewerData instance as input and returns 5 sets of features:
 
@@ -77,8 +77,8 @@ def create_ablation_sets(feature_array, data, scale=True, minimum_votes=float, h
 def run_logreg(X, y, condition=str, save=True):
     """
     Fits logistic regression model for given condition and returns fitted model
-    :param X: (np.ndarray) of size (n, f) with f number of features for n number of cases
-    :param y: (np.ndarray) of length n with gold data
+    :param X: ndarray of size (n, f) with f number of features for n number of cases
+    :param y: ndarray of length n with gold data
     :param condition: (str) condition being tested, used for command line output and file naming
     :param save: (bool)
     :return model: sklearn.linear_model.LogisticRegression() instance fitted for the given data
@@ -111,7 +111,7 @@ def get_zero_rule(y):
     return zero_rule, most_common
 
 
-def score_model(condition, test_y, predictions, save_out=True):
+def score_model(condition, test_y, predictions):
     """
     Scores models and if save_out is True, saves output to file
     :param condition: (str) name of the condition being tested
@@ -131,9 +131,6 @@ def score_model(condition, test_y, predictions, save_out=True):
             F1: {f1:0.03}
             """
     print(scores)
-    if save_out:
-        with open(f"{condition}_scores.txt", 'w') as f:
-            f.write(scores)
     return scores
 
 
@@ -146,7 +143,6 @@ def main():
     parser.add_argument('-s', '--test_file', type=str, default="./data/sample.tsv", help="test file csv/tsv")
     parser.add_argument('-a', '--test_feature_array', default="./data/feature_arrays/sample_features.npy",
                         help="feature array for test_file")
-
     args = parser.parse_args()
     train_file = args.train_file
     feature_array = args.train_feature_array
@@ -159,9 +155,9 @@ def main():
     test_data = ReviewerData(data_file=test_file, delimiter='\t')
     test_data_dict = test_data.data_dict
 
-    # Sets some Hyperparameters
+    # Sets Hyperparameters
     scale = False
-    minimum_votes = 10
+    minimum_votes = 10.0
     help_boundary = 0.6
 
     # Writes to log file
@@ -183,6 +179,7 @@ def main():
                                                            help_boundary=help_boundary)
     zero_rule, most_common = get_zero_rule(test_y)
 
+    # Writes data to log file
     log_file.write(f"Model Information:\n"
                    f"------------------\n"
                    f"\tNumber of Train Reviews: {len(X1[:, 0])}\n"
@@ -191,6 +188,7 @@ def main():
                    f"Results:\n"
                    f"--------\n")
 
+    # Dictionary for looping models
     ablation = {"model1": (X1, tX1),
                 "model2": (X2, tX2),
                 "model3": (X3, tX3),
@@ -203,10 +201,11 @@ def main():
         model = run_logreg(X, y, condition=condition, save=False)
         predictions = model.predict(test_X)
         print("Guessed all 1s") if len(predictions) == sum(predictions) else print("Didn't guess all 1s")
-        scores = score_model(condition=condition, test_y=test_y, predictions=predictions, save_out=False)
+        scores = score_model(condition=condition, test_y=test_y, predictions=predictions)
         log_file.write(scores + '\n')
 
-    zero_rule_score = score_model(condition="Zero Rule", test_y=test_y, predictions=zero_rule, save_out=True)
+    # Scores and writes zero rule to log file
+    zero_rule_score = score_model(condition="Zero Rule", test_y=test_y, predictions=zero_rule)
     log_file.write(zero_rule_score)
     log_file.close()
 
