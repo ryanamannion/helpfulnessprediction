@@ -1,6 +1,4 @@
-## Recommended Command Line Input:
-
-##### First Steps: Environment
+## First Steps: Environment
 
 - Download `reviews.csv` from Kaggle and save it to the `data` directory
 
@@ -20,6 +18,8 @@ change the ???? to the name of your machine
 - Download the spaCy model (if you are computing features, else this can be skipped)
 
         $ python spacy download en_core_web_lg
+
+## Recommended Command Line Input:
         
 ##### Running Scripts
 
