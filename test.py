@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from data_util import ReviewerData
 from get_features import HelpfulnessVectorizer
 from ablation import ablation
