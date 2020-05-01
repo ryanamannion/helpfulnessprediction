@@ -113,7 +113,7 @@ def get_zero_rule(y):
 
 def score_model(condition, test_y, predictions):
     """
-    Scores models and if save_out is True, saves output to file
+    Scores models
     :param condition: (str) name of the condition being tested
     :param test_y: gold standard helpfulness (binary)
     :param predictions: predicted helpfulness (binary)
