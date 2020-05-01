@@ -15,9 +15,9 @@ reviews left on online marketplaces. Given a review and certain other
 metadata, can we engineer features that allow us to accurately predict a
 review's helpfulness without the need for users to vote? 
 
-## `example.md`
+## `tutorial.md`
 
-`example.md` contains examples on how this code can be implemented from
+`tutorial.md` contains examples on how this code can be implemented from
 beginning to finish via the command line and python implementation. It
 also recommends how to test the code for functionality given the long
 processing times of feature extraction
@@ -30,7 +30,7 @@ Example usage:
 `test.py` is a script to test the functionality of the python code, and
 is meant for anybody who wants to evaluate the functionality of this
 code to be able to easily do so. Please follow instructions on setting
-up the conda environment as detailed in example.md before running. 
+up the conda environment as detailed in `tutorial.md` before running. 
 
 By default, `test.py` runs with sample.tsv and dev_test_sample.tsv, two
 sub-datasets of train.tsv and dev_test.tsv respectively. `test.py` also
@@ -38,7 +38,7 @@ includes code for running all of the code from start to finish, starting
 with reviews.csv, the raw data file available on
 [Kaggle](https://www.kaggle.com/snap/amazon-fine-food-reviews). For more
 information on providing other files, as well as command line and python
-implementation, please see example.md. 
+implementation, please see `tutorial.md`. 
 
 ## `data_util.py`
 Example usage: 
