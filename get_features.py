@@ -21,7 +21,7 @@ class HelpfulnessVectorizer:
     Attributes:
         nlp (spacy object): spacy
         read (class): Readability pipeline for spacy
-        data (dict): dictionary containing reviewer data
+        data: ReviewerData instance
         feature_array (numpy.ndarray): contains extracted features for logistic regression model
 
     Methods:
@@ -38,6 +38,7 @@ class HelpfulnessVectorizer:
         self.read = Readability()
         self.nlp.add_pipe(self.read, last=True)
         self.data = data
+        self.data_dict = self.data.data_dict
         self.feature_array = feature_array
 
     def get_features(self):
@@ -73,13 +74,13 @@ class HelpfulnessVectorizer:
         :return: numpy nd array of shape [#ofdocs, 18]
         """
         # selects sample from data dictionary for length
-        sample = list(self.data.values())[0]
+        sample = list(self.data_dict.values())[0]
 
         my_array = np.zeros((len(sample), 18))
         # as many rows as sample is long, 13 features wide
 
-        reviews = self.data["Text"]
-        summaries = self.data["Summary"]
+        reviews = self.data_dict["Text"]
+        summaries = self.data_dict["Summary"]
 
         print(f"Extracting Features for {len(reviews)} Reviews...\nThis might take a while")
         for i, combined in tqdm(enumerate(zip(summaries, reviews))):
@@ -125,7 +126,7 @@ class HelpfulnessVectorizer:
             my_array[i, 3] = sum(s_toks_per_sent) / len(s_toks_per_sent)
             my_array[i, 4] = sum(s_char_per_tok) / len(s_char_per_tok)
             # Review - Simple Features
-            my_array[i, 5] = self.data["Score"][i]  # score/ star rating of review
+            my_array[i, 5] = self.data_dict["Score"][i]  # score/ star rating of review
             my_array[i, 6] = r_num_sents
             my_array[i, 7] = r_num_toks
             my_array[i, 8] = r_num_chars
