@@ -21,6 +21,12 @@
 
         $ python spacy download en_core_web_lg
 
+- Ensure special dependencies downloaded 
+
+        $ pip show spacy-readability
+        ... 
+        $ pip show en_core_web_lg 
+
 ## Recommended Command Line Input:
         
 ##### Running Scripts
