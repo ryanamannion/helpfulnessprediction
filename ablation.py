@@ -202,7 +202,7 @@ def ablation(train_file, train_features, test_file, test_features):
         X, test_X = features
         model = run_logreg(X, y, condition=condition, save=False)
         predictions = model.predict(test_X)
-        print("Guessed all 1s") if len(predictions) == sum(predictions) else print("Didn't guess all 1s")
+        print("\tPredicted Zero Rule") if len(predictions) == sum(predictions) else print("\tDidn't Predict Zero Rule")
         scores = score_model(condition=condition, test_y=test_y, predictions=predictions)
         log_file.write(scores + '\n')
 
