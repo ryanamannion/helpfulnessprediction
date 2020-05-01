@@ -55,7 +55,7 @@ def create_ablation_sets(feature_array, data,  minimum_votes, help_boundary, sca
         all_features = np.load(feature_array) if feature_array.endswith(".npy") else np.load(f"{feature_array}.npy")
 
     if isinstance(data, ReviewerData):
-        data = data
+        data = data.data_dict
     else:
         data = ReviewerData(data_file=data, delimiter='\t').data_dict
 
