@@ -76,22 +76,17 @@
         
 - Using Pre-Extracted Features from data/feature_arrays
     
-        import numpy as np
         from data_util import ReviewerData
-        from get_features import HelpfulnessVectorizer
         from ablation import ablation
         
         train_path = "./data/train.tsv"
-        test_path = "./data/test.tsv"
+        train_vectors = "data/train.npy"
+        test_path = "./data/dev_test.tsv"
+        test_vectors = "data/dev_test.npy"
         
-        train = ReviewerData(data_file=train_path, delimiter='\t')
-        train_data = train_data.data_dict
+        train_data = ReviewerData(data_file=train_path, delimiter='\t')
         
-        test = ReviewerData(data_file=test_path, delimiter='\t')
-        test_data = test_data.data_dict
-
-        train_vectors = np.load("data/train.npy")
-        test_vectors = np.load("data/dev_test.npy")
+        test_data = ReviewerData(data_file=test_path, delimiter='\t')
         
         ablation(train_data, train_vectors, test_data, test_vectors)
             
