@@ -11,6 +11,8 @@
 - Edit the prefix variable in helpfulness.yml at the very bottom to the
   path for your anaconda3, if you are on MacOS you likely only need to
   change the ???? to the name of your machine
+  
+- Create the new conda environment
 
         $ conda env create -f helpfulness.yml
 
