@@ -24,7 +24,7 @@ Example usage:
 from the kaggle dataset, and can be modified with relative ease to work
 with other datasets. 
 
-Running this script from the command line as shows will take the
+Running this script from the command line as shown will take the
 argument of --data_path and save three sub-datasets of that file: train,
 dev_test, and test. These files are saved as a .tsv with a \t delimiter
 
@@ -123,43 +123,53 @@ Example usage:
 
     $ python ablation.py --train_file "path_to_file" --train_feature_array "path_to_file" --test_file "path_to_file" --test_feature_array "path_to_file"
 
-`data_util.py` contains functions for reading and processing review data
-from the kaggle dataset, and can be modified with relative ease to work
-with other datasets. 
+`ablation.py` contains functions for creating different conditions
+through feature ablation, as well as functions to fit and predict those
+conditions with sklearn `LogisticRegression()` instances
 
-Running this script from the command line as shows will take the
-argument of --data_path and save three sub-datasets of that file: train,
-dev_test, and test. These files are saved as a .tsv with a \t delimiter
+Running this script from the command line as shown will create 5
+different train and test conditions:
+
+1. Review Text Features
+2. Review Text + Review Readability Features
+3. Review Text + Readability + Meta
+4. Review Text + Readability + Summary
+5. All Features
+
+The script will then train and test a Logistic Regression model on said
+conditions and predict the output for the test set. The models are
+scored for Accuracy, Precision, Recall, and F1, the outputs of which are
+saved to a log file in the script's directory. The log file also
+contains the hyperparameters used, which by default are:
+
+- Scale: False (whether or not to scale the data prior to training)
+- minimum_votes: 10.0 (minimum number of votes required to be included)
+- help_boundary: 0.6 (cutoff point for if a review is considered
+  helpful)
+
 
 ### Functions:
 
-- `read_data()`: Reads data from csv/tsv file and returns a dictionary
-  with column name as keys and cell contents as values
-- `data_to_tsv()`: Outputs data from dictionary output of read_data to
-  tsv, allows for selection of certain columns
-- `remove_html()`: Removes select html from an input text
-- `filter_data()`: Takes a full feature array and filters it based on
-  hyperparameters (e.g. minimum number of votes, helpfulness cutoff)
-  
-### Classes:
-- `ReviewerData`: Combines the above functions into a class which
-  handles the loading and splitting of data into dev and test sets
-  
-  - Attributes: 
-    - `data_file`: (str) path to loaded data file
-    - `delimiter_type`: (str) delimiter used in `data_file` (i.e. csv or
-      tsv)
-    - `data_dict`: (dict) dictionary containing data from data_file as
-      described in `read_data()`
-    - `train`: shuffled subset of `data_dict`, 80%
-    - `dev_test`: shuffled subset of `data_dict`, 10%
-    - `test`: shuffled subset of `data_dict`, 10%
-  - Methods:
-    - `split_data()`: splits data into dev and test sets 
-
-
+- `scale_data()`: scales data with
+  `sklearn.preprocessing.StandardScaler` instance
+- `create_ablation_sets()`: Takes a full feature array with matching
+  data_dict of ReviewerData instance as input and returns 5 sets of
+  features as listed above
+- `run_logreg()`: Fits logistic regression model for given condition and
+  returns fitted model
+- `get_zero_rule()`: For gold standard tags array y, returns array of
+  length len(y) with zero rule tags, that is the most common tag as the
+  prediction every time
+- `score_model()`: scores models with `sklearn.metrics`
+- `ablation()`: main routine; parses arguments, loads files and fits all
+  models for the given conditions, creates the log file and saves to
+  `ablation.py`'s directory 
 
 ## directory: `data`
 
+Contains data for reviews, including a sample (first 20 lines of
+train.tsv)
 
 ## directory: `data/feature_arrays`
+
+Contains pre-extracted feature arrays for different conditions
