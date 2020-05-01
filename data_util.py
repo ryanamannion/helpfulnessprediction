@@ -79,13 +79,15 @@ def data_to_tsv(data_dict, output_name=str, all_columns=True, columns=None):
             f.write(new_row)
 
 
-def remove_html(text):
+def remove_html(text, html=('<br />',)):
     """
-    Removes select html from an input text
+    Removes specified html from an input text
     :param text: (str) text to remove html from
+    :param html: (iterable) html tags to remove from text
     :return text: (str) input string less html tags
     """
-    text = text.replace("<br />", " ")      # replaces html line breaks with whitespace
+    for item in html:
+        text = text.replace(item, " ")      # replaces html line breaks with whitespace
     return text
 
 
