@@ -37,9 +37,9 @@
  
         $ python data_util.py --data_path "./data/reviews.csv"
         ...
-        $ python get_features.py --data_path "train.tsv" --name "all_features"
+        $ python get_features.py --data_path "train.tsv" --name "train"
         ...
-        $ python get_features.py --data_path "dev_test.tsv" --name "dev_test_features"
+        $ python get_features.py --data_path "dev_test.tsv" --name "dev_test"
         ... 
         $ python ablation.py --train_file "train.tsv" --train_feature_array "train.npy" \
         --test_file "dev_test.tsv" --test_feature_array "dev_test.npy"
@@ -47,6 +47,9 @@
 -  The log will then be saved to the cwd with the name
    log_(month)\_(day)\_(hour)_(minutes).txt as to not overwrite other
    log file when tuning hyperparameters
+   
+- To test this without the long run time, use `sample.tsv` and
+  `dev_test_sample.tsv` instead of `train.tsv` and `dev_test.tsv`
    
 ## Recommended Python Implementation:
 
