@@ -42,7 +42,8 @@ def read_data(csv_file, delimiter=str):
                 i += 1
             elif i >= 0:
                 # ensures delimiter did not bug out
-                assert len(row) == len(header_key), f"Row is longer than it should be!\nheaders:{header_key}\nrow:{row}"
+                assert len(row) == len(header_key), f"Row is longer than it should be! " \
+                                                    f"Please ensure delimiter is correct"
                 for j, cell_value in enumerate(row):
                     col_name = header_key[j]
                     review_data[col_name].append(cell_value)
