@@ -134,7 +134,7 @@ def score_model(condition, test_y, predictions):
     return scores
 
 
-def main():
+def ablation():
     # Argparse Routine
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--train_file', type=str, default="./data/sample.tsv", help="train file csv/tsv")
@@ -211,4 +211,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    ablation()

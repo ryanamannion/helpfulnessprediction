@@ -32,6 +32,7 @@ class HelpfulnessVectorizer:
         Instantiates SimilarityVectorizer, loads spaCy model
         """
         print("Initializing spaCy...")
+        self.spacy_model = spacy_model
         self.nlp = spacy.load(spacy_model)
         self.read = Readability()
         self.nlp.add_pipe(self.read, last=True)
