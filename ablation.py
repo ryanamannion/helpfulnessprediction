@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """
 ablation.py
+includes functions and a class for running a feature ablation
 
-
+Ryan A. Mannion
+Written for LING472 Final Project
+2020
 """
 import argparse
 import numpy as np

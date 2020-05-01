@@ -4,6 +4,7 @@ creates a class to get and fill a feature matrix for a logistic regression model
 
 Ryan A. Mannion
 Written for LING472 Final Project
+2020
 """
 import argparse
 import numpy as np

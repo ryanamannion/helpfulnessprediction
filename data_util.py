@@ -5,13 +5,6 @@ data_util.py
 Contains functions for reading and saving data, as well as the class ReviewerData which handles loading and splitting
 of data, and has attributes to help organization
 
-Functions:
-    read_data
-    data_to_tsv
-
-Class:
-    ReviewerData
-
 Ryan A. Mannion
 Written for LING472 Final Project
 2020
