@@ -128,7 +128,8 @@ Readability Features. The following is the order of features in the full
 ## `ablation.py`
 Example usage: 
 
-    $ python ablation.py --train_file "path_to_file" --train_feature_array "path_to_file" --test_file "path_to_file" --test_feature_array "path_to_file"
+    $ python ablation.py --train_file "path_to_file" --train_feature_array "path_to_file" \
+    --test_file "path_to_file" --test_feature_array "path_to_file"
 
 `ablation.py` contains functions for creating different conditions
 through feature ablation, as well as functions to fit and predict those
