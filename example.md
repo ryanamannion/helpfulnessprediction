@@ -1,8 +1,9 @@
 ## First Steps: Environment
 
-- Download `reviews.csv` from
-  [Kaggle](https://www.kaggle.com/snap/amazon-fine-food-reviews/) and
-  save it to the `data` directory
+- Download data from
+  [Google Drive Link](https://drive.google.com/file/d/13ZrQZJkeFly_C5NgPr6caV4-twK4KUpm/view?usp=sharing)
+  and unzip. Move `reviews.csv` and `train.tsv` to this repo's `data`
+  directory
 
 - With Conda, create a new conda environment from the helpfulness.yml
   file in dependencies directory
