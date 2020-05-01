@@ -15,6 +15,13 @@ reviews left on online marketplaces. Given a review and certain other
 metadata, can we engineer features that allow us to accurately predict a
 review's helpfulness without the need for users to vote? 
 
+## `example.py`
+
+`example.py` contains an example on how this code can be implemented
+from beginning to finish, as well as recommendations on how to test the
+code for functionality, given the long processing times of feature
+extraction
+
 ## `data_util.py`
 Example usage: 
 
