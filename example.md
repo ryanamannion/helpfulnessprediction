@@ -40,8 +40,8 @@
         ...
         $ python get_features.py --data_path "dev_test.tsv" --name "dev_test_features"
         ... 
-        $ python ablation.py --train_file "train.tsv" --train_feature_array "all_features.npy" \
-        --test_file "dev_test.tsv" --test_feature_array "dev_test_features.npy"
+        $ python ablation.py --train_file "train.tsv" --train_feature_array "train.npy" \
+        --test_file "dev_test.tsv" --test_feature_array "dev_test.npy"
  
 -  The log will then be saved to the cwd with the name
    log_(month)\_(day)\_(hour)_(minutes).txt as to not overwrite other
@@ -86,8 +86,8 @@
         test = ReviewerData(data_file=test_path, delimiter='\t')
         test_data = test_data.data_dict
 
-        train_vectors = np.load("data/feature_arrays/train_features.npy")
-        test_vectors = np.load("data/feature_arrays/dev_test_features.npy")
+        train_vectors = np.load("data/train.npy")
+        test_vectors = np.load("data/dev_test.npy")
         
         ablation(train_data, train_vectors, test_data, test_vectors)
             
