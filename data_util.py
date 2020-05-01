@@ -95,31 +95,40 @@ def remove_html(text):
     return text
 
 
-def remove_nonzero(data_dict, feature_array):
+def filter_data(data_dict, feature_array, help_boundary=0.6, minimum_votes=5):
     """
     This function takes a full feature array and removes the rows corresponding to those reviews which received no votes
     for helpfulness (i.e. HelpfulnessDenominator == 0). Ideally these reviews would be removed beforehand
 
     :param data_dict: (dict) data_dict attribute of a ReviewerData instance
     :param feature_array: ndarray feature array of shape (x, 18) where x == the total number of reviews
+    :param help_boundary: (float) percentage of votes to be considered helpful
+    :param minimum_votes: (int) minimum number of votes to be included
     :return nonzero_feats: ndarray of shape (y, 18) where y == the number of reviews with helpfulness votes
+    :return helpfulness_key: new key for whether or not a review is helpful or not
     """
-    help_denom = data_dict["HelpfulnessDenominator"]
+    numerators = data_dict["HelpfulnessNumerator"]
+    denominators = data_dict["HelpfulnessDenominator"]
+    helpfulness_key = []
 
-    nonzero_denom = [0 if num == 0 else 1 for num in help_denom]
-    nonzero_feats = np.zeros((sum(nonzero_denom), 18))
-
-    assert len(help_denom) == len(nonzero_feats) and len(help_denom) == len(data_dict["Text"]), "Lists not the same len"
+    meets_minimum = [1 if denominator > str(minimum_votes) else 0 for denominator in denominators]
+    filtered_feats = np.zeros((sum(meets_minimum), 18))  # ndarray to store filtered features
 
     count = 0
-    for i, nonzero_bin in enumerate(nonzero_denom):
-        if nonzero_bin == 0:
-            pass
-        else:
-            nonzero_feats[count, :] = feature_array[i]
+    for i, binary_decision in enumerate(meets_minimum):
+        if binary_decision == 1:
+            score = 1 if int(numerators[i])/int(denominators[i]) >= help_boundary else 0
+            helpfulness_key.append(score)
+            filtered_feats[count, :] = feature_array[i]
             count += 1
+        else:
+            pass
 
-    return nonzero_feats
+    assert len(helpfulness_key) == len(filtered_feats[:, 0]), "feature matrix and key do not have same length!\n" \
+                                                             f"Matrix: {filtered_feats.shape}\n" \
+                                                             f"Key length: {len(helpfulness_key)}\n"
+
+    return filtered_feats, helpfulness_key
 
 
 class ReviewerData:
