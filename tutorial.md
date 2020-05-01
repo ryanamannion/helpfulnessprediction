@@ -88,7 +88,7 @@
         
         ablation(train_data, train_vectors, test_data, test_vectors)
         
-- Using Pre-Extracted Features from data/feature_arrays
+- Using Pre-Extracted Features from the `data` directory 
     
         from data_util import ReviewerData
         from ablation import ablation
