@@ -95,7 +95,7 @@ def remove_html(text):
     return text
 
 
-def filter_data(data_dict, feature_array, help_boundary=0.6, minimum_votes=5):
+def filter_data(data_dict, feature_array, help_boundary=float, minimum_votes=float):
     """
     This function takes a full feature array and removes the rows corresponding to those reviews which received no votes
     for helpfulness (i.e. HelpfulnessDenominator == 0). Ideally these reviews would be removed beforehand
@@ -111,7 +111,7 @@ def filter_data(data_dict, feature_array, help_boundary=0.6, minimum_votes=5):
     denominators = data_dict["HelpfulnessDenominator"]
     helpfulness_key = []
 
-    meets_minimum = [1 if denominator > str(minimum_votes) else 0 for denominator in denominators]
+    meets_minimum = [1 if float(denominator) >= minimum_votes else 0 for denominator in denominators]
     filtered_feats = np.zeros((sum(meets_minimum), 18))  # ndarray to store filtered features
 
     count = 0
