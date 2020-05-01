@@ -196,9 +196,12 @@ contains the hyperparameters used, which by default are:
 
 ## directory: `data`
 
-Contains data for reviews, including a sample (first 20 lines of
-train.tsv)
+Contains data for reviews, including the following samples for testing
+the code:
 
-## directory: `data/feature_arrays`
+- `sample.tsv`: first 1000 lines of train.tsv
+- `dev_test_dample.tsv`: first 500 lines of dev_test.tsv
 
-Contains pre-extracted feature arrays for different conditions
+Files ending in `.tsv` are tabular files containing data found in the
+Kaggle dataset. Files ending in `.npy` are the corresponding feature
+arrays extracted with get_features.HelpfulnessVectorizer
