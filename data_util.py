@@ -58,7 +58,7 @@ def read_data(csv_file, delimiter=str):
 
 def data_to_tsv(data_dict, output_name=str, all_columns=True, columns=None):
     """
-    Outputs data from dictionary output of read_data to tsv, allows for selection of only certain columns
+    Outputs data from dictionary output of read_data to tsv, allows for selection of certain columns
     :param data_dict: dict, dictionary containing the data
     :param all_columns: bool, if true, all columns from data_dict are output to tsv
     :param columns: if all_columns is False, list of column names to be output to tsv, must match headers in data_dict
@@ -95,15 +95,15 @@ def remove_html(text):
     return text
 
 
-def filter_data(data_dict, feature_array, help_boundary=float, minimum_votes=float):
+def filter_data(data_dict, feature_array, help_boundary, minimum_votes):
     """
-    This function takes a full feature array and removes the rows corresponding to those reviews which received no votes
+    Takes a full feature array and removes the rows corresponding to those reviews which received no votes
     for helpfulness (i.e. HelpfulnessDenominator == 0). Ideally these reviews would be removed beforehand
 
     :param data_dict: (dict) data_dict attribute of a ReviewerData instance
     :param feature_array: ndarray feature array of shape (x, 18) where x == the total number of reviews
     :param help_boundary: (float) percentage of votes to be considered helpful
-    :param minimum_votes: (int) minimum number of votes to be included
+    :param minimum_votes: (float) minimum number of votes to be included
     :return nonzero_feats: ndarray of shape (y, 18) where y == the number of reviews with helpfulness votes
     :return helpfulness_key: new key for whether or not a review is helpful or not
     """
@@ -202,7 +202,9 @@ def main():
     parser.add_argument('--data_path', type=str, default="reviews.csv", help="csv file containing data to be read")
     args = parser.parse_args()
 
-    review_data = ReviewerData(data_file=args.data_path, delimiter=',')
+    delimiter = ',' if args.data_path.endswith('csv') else '\t'
+
+    review_data = ReviewerData(data_file=args.data_path, delimiter=delimiter)
 
     print(f"Splitting data {review_data.data_file}...")
     review_data.split_data()
