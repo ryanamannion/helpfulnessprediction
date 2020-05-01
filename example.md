@@ -59,19 +59,21 @@
         from get_features import HelpfulnessVectorizer
         from ablation import ablation
         
-        reviews = "./data/reviews.csv"
+        # To load, split, and use ~full~ datasets, use this code
+        # reviews = "./data/reviews.csv"
+        # reviewer_data = ReviewerData(data_file=reviews, delimiter=',')
+        # reviewer_data.split_data()
+        # train_data = reviewer_data.train
+        # test_data = reviewer_data.dev_test
         
-        reviewer_data = ReviewerData(data_file=reviews, delimiter=',')
-        reviewer_data.split_data()
-        
-        train_data = reviewer_data.train
+        # To load pre-split sample datasets, use this code
+        train_data = ReviewerData(data_file="data/sample.tsv", delimiter='\t')
         train_vectorizer = HelpfulnessVectorizer(data=train_data)
-        train_vectors = test_vectorizer.get_features()
-        
-        test_data = reviewer_data.test
+        train_vectors = train_vectorizer.get_features()
+        test_data = ReviewerData(data_file="data/dev_test_sample.tsv", delimiter='\t')
         test_vectorizer = HelpfulnessVectorizer(data=test_data)
         test_vectors = test_vectorizer.get_features()
-        
+
         ablation(train_data, train_vectors, test_data, test_vectors)
         
 - Using Pre-Extracted Features from data/feature_arrays
