@@ -47,7 +47,7 @@
    log_(month)\_(day)\_(hour)_(minutes).txt as to not overwrite other
    log file when tuning hyperparameters
    
-## Recommended Python Implementation
+## Recommended Python Implementation:
 
 - Start to finish
 
