@@ -200,7 +200,7 @@ Contains data for reviews, including the following samples for testing
 the code:
 
 - `sample.tsv`: first 1000 lines of train.tsv
-- `dev_test_dample.tsv`: first 500 lines of dev_test.tsv
+- `dev_test_sample.tsv`: first 500 lines of dev_test.tsv
 
 Files ending in `.tsv` are tabular files containing data found in the
 Kaggle dataset. Files ending in `.npy` are the corresponding feature
