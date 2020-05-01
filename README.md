@@ -65,7 +65,9 @@ dev_test, and test. These files are saved as a .tsv with a \t delimiter
 ## `get_features.py`
 Example usage: 
 
-    $ python get_features.py --data_path "./data/sample.tsv" --name "sample_features"
+    $ python get_features.py --data_path "./data/sample.tsv" --name "sample"
+    ... 
+    $ python get_features.py --data_path "./data/dev_test_sample.tsv" --name "dev_test_sample"
 
 `get_features.py` contains a class HelpfulnessVectorizer for extracting
 features from a set of texts. Running from the command line as shown
@@ -128,8 +130,9 @@ Readability Features. The following is the order of features in the full
 ## `ablation.py`
 Example usage: 
 
-    $ python ablation.py --train_file "path_to_file" --train_feature_array "path_to_file" \
-    --test_file "path_to_file" --test_feature_array "path_to_file"
+    $ cd data
+    $ python ../ablation.py --train_file "sample.tsv" --train_feature_array "sample.npy" \
+    --test_file "dev_test_sample.tsv" --test_feature_array "dev_test_sample.npy"
 
 `ablation.py` contains functions for creating different conditions
 through feature ablation, as well as functions to fit and predict those
