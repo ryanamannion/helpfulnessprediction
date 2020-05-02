@@ -36,16 +36,19 @@ def create_ablation_sets(feature_array, data,  minimum_votes, help_boundary, sca
     Ablation Feature Sets:
     X1 - Review Simple
     X2 - Review + Readability
-    X3 - AllReview + Meta
-    X4 - AllReview + Summary
-    X5 - All
+    X3 - Review + Meta
+    X4 - Review + Summary
+    X5 - Review + Readability + Meta
+    X6 - Review + Readability + Summary
+    X7 - Review + Summary + Meta
+    X8 - All
 
     :param feature_array: ndarray containing full set of features to be turned into ablation set
     :param data: ReviewerData instance's data_dict attribute, matches feature_array
     :param scale: (bool) whether or not to scale data before Logistic Regression
     :param minimum_votes: (float) minimum number of helpfulness votes to be included in ablation sets
     :param help_boundary: (float) percentage (0-1) of votes needed to be considered helpful
-    :return set(1-5): ndarrays for ablation
+    :return ablation_sets: (lst) ndarrays for ablation
     :return y: gold standard tags for helpfulness, binary based on help_boundary
     """
 
@@ -72,14 +75,23 @@ def create_ablation_sets(feature_array, data,  minimum_votes, help_boundary, sca
     set2_concat = np.concatenate((review_simple_feats, readability_feats), axis=1)
     set2 = scale_data(set2_concat) if scale else set2_concat
     # -
-    set3 = scale_data(processed_feats[:, 5:]) if scale else processed_feats[:, 5:]
+    set3 = scale_data(processed_feats[:, 5:11]) if scale else processed_feats[:, 5:11]
     # -
-    set4_concat = np.concatenate((summary_feats, review_simple_feats, readability_feats), axis=1)
+    set4_concat = np.concatenate((review_simple_feats, summary_feats), axis=1)
     set4 = scale_data(set4_concat) if scale else set4_concat
     # -
-    set5 = scale_data(processed_feats) if scale else processed_feats
+    set5 = scale_data(processed_feats[:, 5:]) if scale else processed_feats[:, 5:]
+    # -
+    set6_concat = np.concatenate((summary_feats, review_simple_feats, readability_feats), axis=1)
+    set6 = scale_data(set6_concat) if scale else set6_concat
+    # -
+    set7 = scale_data(processed_feats[:, 0:11]) if scale else processed_feats[:, 0:11]
+    # -
+    set8 = scale_data(processed_feats) if scale else processed_feats
 
-    return set1, set2, set3, set4, set5, y
+    ablation_sets = [set1, set2, set3, set4, set5, set6, set7, set8]
+
+    return ablation_sets, y
 
 
 def run_logreg(X, y, condition=str, save=True):
@@ -180,11 +192,13 @@ def ablation(train_file, train_features, test_file, test_features, scale=False, 
                    f"\tHelpfulness Cutoff Point: {help_boundary}\n\n")
 
     # Creates Ablation sets for Train and Test
-    X1, X2, X3, X4, X5, y = create_ablation_sets(feature_array=train_features, data=train_data_dict, scale=scale,
-                                                 minimum_votes=minimum_votes, help_boundary=help_boundary)
-    tX1, tX2, tX3, tX4, tX5, test_y = create_ablation_sets(feature_array=test_features, data=test_data_dict,
-                                                           scale=scale, minimum_votes=minimum_votes,
-                                                           help_boundary=help_boundary)
+    train_ablation_sets, y = create_ablation_sets(feature_array=train_features, data=train_data_dict, scale=scale,
+                                            minimum_votes=minimum_votes, help_boundary=help_boundary)
+    test_ablation_sets, test_y = create_ablation_sets(feature_array=test_features, data=test_data_dict,
+                                                 scale=scale, minimum_votes=minimum_votes,
+                                                 help_boundary=help_boundary)
+    X1, X2, X3, X4, X5, X6, X7, X8 = train_ablation_sets
+    tX1, tX2, tX3, tX4, tX5, tX6, tX7, tX8 = test_ablation_sets
     zero_rule, most_common = get_zero_rule(test_y)
 
     # Writes data to log file
@@ -201,7 +215,10 @@ def ablation(train_file, train_features, test_file, test_features, scale=False, 
                 "model2": (X2, tX2),
                 "model3": (X3, tX3),
                 "model4": (X4, tX4),
-                "model5": (X5, tX5)}
+                "model5": (X5, tX5),
+                "model6": (X6, tX6),
+                "model7": (X7, tX7),
+                "model8": (X8, tX8)}
 
     # iteratively fits, predicts, and scores each model
     for condition, features in ablation.items():
@@ -232,4 +249,4 @@ if __name__ == "__main__":
     test = args.test_file
     test_feats = args.test_feature_array
 
-    ablation(train, train_feats, test, test_feats)
+    ablation(train, train_feats, test, test_feats, scale=False, help_boundary=0.75, minimum_votes=15)
