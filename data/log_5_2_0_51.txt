@@ -1,0 +1,72 @@
+Log file for experiment on 5/2 at 0:51
+Train File: data/train.tsv
+Test File: data/test.tsv
+
+Hyperparameters:
+----------------
+	Scaled Data: False
+	Minimum Votes Needed: 15
+	Helpfulness Cutoff Point: 0.75
+
+Model Information:
+------------------
+	Number of Train Reviews: 10454
+	Number of Test Reviews: 1208
+	Zero Rule Value: 1
+
+Results:
+--------
+	model1:
+            Accuracy: 0.722
+            Precision: 0.722
+            Recall: 1.0
+            F1: 0.838
+            
+	model2:
+            Accuracy: 0.722
+            Precision: 0.722
+            Recall: 1.0
+            F1: 0.838
+            
+	model3:
+            Accuracy: 0.791
+            Precision: 0.862
+            Recall: 0.846
+            F1: 0.854
+            
+	model4:
+            Accuracy: 0.725
+            Precision: 0.724
+            Recall: 1.0
+            F1: 0.84
+            
+	model5:
+            Accuracy: 0.782
+            Precision: 0.858
+            Recall: 0.837
+            F1: 0.847
+            
+	model6:
+            Accuracy: 0.725
+            Precision: 0.724
+            Recall: 1.0
+            F1: 0.84
+            
+	model7:
+            Accuracy: 0.793
+            Precision: 0.859
+            Recall: 0.853
+            F1: 0.856
+            
+	model8:
+            Accuracy: 0.791
+            Precision: 0.862
+            Recall: 0.846
+            F1: 0.854
+            
+	Zero Rule:
+            Accuracy: 0.722
+            Precision: 0.722
+            Recall: 1.0
+            F1: 0.838
+            
